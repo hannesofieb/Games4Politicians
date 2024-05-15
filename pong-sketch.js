@@ -92,7 +92,7 @@ function p1Wins(){
     text('PLAYER 1 WINS',width/2,200);
 
     textSize(30);
-    text('REFRESH TOT RY AGAIN',width/2,250);
+    text('REFRESH TO TRY AGAIN',width/2,250);
 }//close P1WINS
 
 function p2Wins(){
@@ -104,7 +104,7 @@ function p2Wins(){
     text('PLAYER 2 WINS',width/2,200);
 
     textSize(30);
-    text('REFRESH TOT RY AGAIN',width/2,250);
+    text('REFRESH TO TRY AGAIN',width/2,250);
 }//close P1WINS
 
 function pong(){
@@ -189,10 +189,12 @@ function pong(){
 
 
 function keyTyped(){
-    if(key == 'w' && keyIsPressed){
+    if(keyIsDown(87)){
+        //w is pressed
         p1Y = p1Y-pSpeed;
     }//close w
-    if(key == 's' && keyIsPressed){
+    if(keyIsDown(83)){
+        //s is pressed
         p1Y = p1Y+pSpeed;
     }//close s
 
@@ -200,10 +202,10 @@ function keyTyped(){
 
 
 function keyPressed(){
-    if(keyCode == UP_ARROW && keyIsPressed){
+    if(keyIsDown(UP_ARROW)){
         p2Y = p2Y-pSpeed;
     }//close up
-    if(keyCode == DOWN_ARROW && keyIsPressed){
+    if(keyIsDown(DOWN_ARROW)){
         p2Y = p2Y+pSpeed;
     }//close down
 }
@@ -211,3 +213,4 @@ function keyPressed(){
 
 
 // followed Mr.Erdreich's tutorial for creating pong in JS: https://www.youtube.com/playlist?list=PLBDInqUM5B270kU0D3TyJl_c7Z98Q2oc7
+// also used chatgpt for bugs (Mr Erdreich's video might be a bit old? some lingo was not up to date)
