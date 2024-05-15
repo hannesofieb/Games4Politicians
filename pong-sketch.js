@@ -1,4 +1,8 @@
 //global
+//P5.play MUST BE ENABLED
+
+
+
 //ball
 var ballX;
 var ballY;
