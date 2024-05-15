@@ -22,6 +22,12 @@ var pSpeed = 5;
 //scoreboard
 var p1Score = 0;
 var p2Score = 0;
+var winningScore =2;
+
+//functions
+var stage = 0;
+//0 = splash
+//1 = pong
 
 function setup(){
     createCanvas(windowWidth,windowHeight-15);
@@ -36,9 +42,66 @@ function setup(){
 } //close setup
 
 function draw(){
-    pong(); //run pong function
-    
-}
+    if (stage == 0){
+        splash(); //run splash
+    }
+    if(stage ==1){
+        pong(); //run pong function
+    } 
+    if(stage ==2){
+        p1Wins();
+    }
+    if(stage ==3){
+        p2Wins();
+    }
+
+
+    if(mouseIsPressed == true){
+        stage = 1; // start pong
+    }//close stage change
+
+}//close draw
+
+
+function splash(){
+    //welcome screen
+    background(0);
+    fill(255);
+
+    textSize(150);
+    text('PONG',width/2,200);
+
+    textSize(30);
+    text('PROGRAMMED BY HANNE SOFIE',width/2,250);
+
+    textSize(30);
+    text('CLICK TO START',width/2,450);
+}//close splash
+
+
+function p1Wins(){
+    //p1 win screen
+    background(0);
+    fill(255);
+
+    textSize(150);
+    text('PLAYER 1 WINS',width/2,200);
+
+    textSize(30);
+    text('REFRESH TOT RY AGAIN',width/2,250);
+}//close P1WINS
+
+function p2Wins(){
+    //p1 win screen
+    background(0);
+    fill(255);
+
+    textSize(150);
+    text('PLAYER 2 WINS',width/2,200);
+
+    textSize(30);
+    text('REFRESH TOT RY AGAIN',width/2,250);
+}//close P1WINS
 
 function pong(){
     //call functions
@@ -108,6 +171,14 @@ function pong(){
         ballX = width/2;
         ballY = height/2;
     }//close p1 scores
+
+    if(p1Score >=winningScore){
+        stage = 2; //run p1Wins
+    }//close p1wins
+
+    if(p2Score >=winningScore){
+        stage = 3; //run p2Wins
+    }//close p2wins
 
 
 }//close pong
