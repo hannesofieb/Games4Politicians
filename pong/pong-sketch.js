@@ -22,7 +22,7 @@ var p1Y;
 //player2 IS NOW CPU
 var p2X;
 var p2Y;
-var cpuSpeed = 1; //allows to change difficulty levels
+var cpuSpeed = 5; //allows to change difficulty levels
 //playersize
 var pWidth = 10;
 var pHeight = 200;
@@ -159,11 +159,11 @@ function pong(){
         ballDirectionY = ballDirectionY * -1; //change direction
     }
     //with paddles
-    if(ballX >= p1X - 10 && ballX <= p1X + 10 && ballY >= p1Y - 50 && ballY <= p1Y + 50){
+    if(ballX >= p1X - 10 && ballX <= p1X + 10 && ballY >= p1Y - 100 && ballY <= p1Y + 100){
         //hit player paddle
         ballDirectionX = ballDirectionX * -1; // change direction
     }
-    if(ballX >= p2X - 10 && ballX <= p2X + 10 && ballY >= p2Y - 50 && ballY <= p2Y + 50){
+    if(ballX >= p2X - 10 && ballX <= p2X + 10 && ballY >= p2Y - 100 && ballY <= p2Y + 100){
         //hit player paddle
         ballDirectionX = ballDirectionX * -1; // change direction
     }
@@ -180,7 +180,7 @@ function pong(){
         p2Score = p2Score + 1; //add score
         //recenter ball
         ballX = width / 2;
-        ballY = height / 2;
+        ballY = random(height * 0.25, height * 0.75); // Random Y position along the center
         //reset ballspeed
         ballSpeed = initBallSpeed; 
     }//close p2 scores
@@ -190,7 +190,7 @@ function pong(){
         p1Score = p1Score + 1; //add score
         //recenter ball
         ballX = width / 2;
-        ballY = height / 2;
+        ballY = random(height * 0.25, height * 0.75); // Random Y position along the center
         //reset ballspeed
         ballSpeed = initBallSpeed; 
     }//close p1 scores
@@ -221,25 +221,28 @@ function handlePlayerMovement(){
 
 
 
-function cpu(){
-    //controls cpu player
-    if(ballX >= width / 2){ 
-        //if the ball crossed center court...
-        if (p2Y <= ballY){
-            p2Y = p2Y + cpuSpeed;
-            //move down
-        }//close above ball
-        if(p2Y >= ballY){
-            p2Y = p2Y - cpuSpeed;
-            //move up
-        }//close below ball
-    }//close move cpu
-    else{
-        p2Y = p2Y;
-        //only move when cpu ball is on cpu side
-    }//close else
-}//close cpu
+function cpu() {
+    // Determine the amount to scroll
+    var scrollAmount = 1;
 
+    // Controls CPU player
+    if (ballX >= width / 2) { 
+        // If the ball crossed center court...
+        if (p2Y <= ballY) {
+            p2Y = p2Y + cpuSpeed;
+            // Move down and scroll page down
+            window.scrollBy(0, scrollAmount);
+        } // Close above ball
+        if (p2Y >= ballY) {
+            p2Y = p2Y - cpuSpeed;
+            // Move up and scroll page up
+            window.scrollBy(0, -scrollAmount);
+        } // Close below ball
+    } else {
+        p2Y = p2Y;
+        // Only move when CPU ball is on CPU side
+    } // Close else
+} // Close cpu
 
 // followed Mr.Erdreich's tutorial for creating pong in JS: https://www.youtube.com/playlist?list=PLBDInqUM5B270kU0D3TyJl_c7Z98Q2oc7
 // also used chatgpt for bugs (Mr Erdreich's video might be a bit old? some lingo was not up to date)
