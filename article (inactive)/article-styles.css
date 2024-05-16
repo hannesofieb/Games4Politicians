@@ -1,0 +1,28 @@
+:root{
+    --blue: #2323b3;
+}
+
+*{
+    margin: 0;
+}
+
+nav{
+    background-color: var(--blue);
+}
+
+
+.article-img{
+    max-width: 70vw;
+    max-height: 50vh;
+    object-fit: cover;
+}
+
+iframe {
+    position: fixed;
+    width: 40%;
+    height: 40%;
+    position: absolute;
+    left: 30%; /* Adjust as needed */
+    bottom: 10%; /* Adjust as needed */
+    border: none;
+}
