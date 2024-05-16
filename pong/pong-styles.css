@@ -3,9 +3,3 @@
     overflow-y: hidden;
     overflow-x: hidden;
 }
-body{
-    background-image: url(../img/excel.png);
-    background-position: top;
-    background-repeat: no-repeat;
-    background-size: contain;
-}

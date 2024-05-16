@@ -5,8 +5,8 @@ var pg;
 //ball
 var ballX;
 var ballY;
-var ballWidth = 15;
-var ballHeight = 15;
+var ballWidth = 18;
+var ballHeight = 18;
 var ballSpeed = 7;
 var initBallSpeed = 7; // for resetting ballSpeed later in code
 var maxBallSpeed = 25; // Maximum speed the ball can reach
@@ -41,10 +41,12 @@ var stage = 0;
 //images
 var landingImg;
 var endImg;
+var cursor;
 
 function preload(){
     landingImg = loadImage('img/landing-page.png');
     endImg = loadImage('img/365.png');
+    cursor = loadImage('../img/cursor-64-black.png');
 
 }
 
@@ -119,13 +121,6 @@ function introductional(){
 function endOfGame(){
     //p1 win screen
     background(endImg);
-    fill(255);
-
-    textSize(30);
-    text('END OF GAME', width / 2, height*0.4);
-
-    textSize(10);
-    text('CLICK ON SCREEN TO TRY AGAIN', width / 2, height*0.6);
 }//close P1WINS
 
 function pong(){
@@ -137,7 +132,7 @@ function pong(){
     noStroke(); //no border
 
     //draw ball
-    rect(ballX, ballY, ballWidth, ballHeight);
+    image(cursor,ballX, ballY, ballWidth, ballHeight);
 
     //draw players
     rect(p1X, p1Y, pWidth, pHeight);
