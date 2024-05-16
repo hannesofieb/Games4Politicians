@@ -2,11 +2,11 @@ html, body {
     overflow-x: hidden;
     margin: 0;
     padding: 0;
+    
 }
 
 .excel-nav{
     width: 100vw;
-    height:15vh;
 }
 .excel-input-bar{
     width: 100vw;
@@ -26,14 +26,20 @@ nav .scoreboard{
     max-height: 85vh;
 }
 
-
 .pong-container{
     display: flex;
     flex-direction: row;
 }
 
 .p1Paddle-container{
-    background-color: blue;
+    background-color: rgb(194, 194, 194);
     width: 25px;
 }
+#defaultCanvas0 {
+    position: absolute;
+    z-index: 20;
+    top: 0;
+    left: 0;
+}
 
+@media

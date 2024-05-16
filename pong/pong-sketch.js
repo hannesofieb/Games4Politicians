@@ -6,9 +6,9 @@ var ballX;
 var ballY;
 var ballWidth = 15;
 var ballHeight = 15;
-var ballSpeed = 4;
-var initBallSpeed = 4; // for resetting ballSpeed later in code
-var maxBallSpeed = 10; // Maximum speed the ball can reach
+var ballSpeed = 7;
+var initBallSpeed = 7; // for resetting ballSpeed later in code
+var maxBallSpeed = 25; // Maximum speed the ball can reach
 var lastSpeedIncreaseTime = 0; // Variable to store the time of the last speed increase
 var speedIncreaseInterval = 10000; // Increase ball speed every 10 seconds (in milliseconds)
 var speedIncreaseAmount = 1; // Amount to increase ball speed by
@@ -16,15 +16,15 @@ var ballDirectionX = 1;
 var ballDirectionY = 1;
 
 //player1
-var p1X = 10;
+var p1X = 5;
 var p1Y;
 //player2 IS NOW CPU
 var p2X;
 var p2Y;
-var cpuSpeed = 4; //allows to change difficulty levels
+var cpuSpeed = 15; //allows to change difficulty levels
 //playersize
-var pWidth = 15;
-var pHeight = 50;
+var pWidth = 10;
+var pHeight = 200;
 var pSpeed = 8;
 
 //scoreboard
@@ -49,7 +49,7 @@ function setup(){
     textAlign(CENTER); //center text
 
     //sets placement of player paddles
-    p2X = width-10;
+    p2X = width-p1X;
     p2Y = height/2;
     p1Y = height/2;
 
@@ -131,16 +131,11 @@ function p2Wins(){
 }//close P1WINS
 
 function pong(){
-    //court appearance
-    clear();
-    
+    clear(); //no trace of paddles or ball    
     noFill();
-    stroke(255, 0, 0);
-    rect(width / 2, height / 2, width, height);
-    line(width/2, 0, width/2, height); //centre line
 
     //set colours
-    fill(255,0,0);
+    fill(100);
     noStroke(); //no border
 
     //draw ball
