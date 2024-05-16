@@ -1,5 +1,6 @@
 //global
 //P5.play MUST BE ENABLED
+var pg;
 
 //ball
 var ballX;
@@ -21,7 +22,7 @@ var p1Y;
 //player2 IS NOW CPU
 var p2X;
 var p2Y;
-var cpuSpeed = 15; //allows to change difficulty levels
+var cpuSpeed = 1; //allows to change difficulty levels
 //playersize
 var pWidth = 10;
 var pHeight = 200;
@@ -34,9 +35,19 @@ var winningScore = 5;
 
 //functions
 var stage = 0;
-//0 = splash
+//0 = introductional
 //1 = pong
-var pg;
+
+//images
+var landingImg;
+var endImg;
+
+function preload(){
+    landingImg = loadImage('img/landing-page.png');
+    endImg = loadImage('img/365.png');
+
+}
+
 function setup(){
     // Create canvas with specified width and height
     var canvas = createCanvas(windowWidth, windowHeight);
@@ -58,16 +69,13 @@ function setup(){
 function draw(){
     pg
     if (stage == 0){
-        splash(); //run splash
+        introductional(); //run introductional
     }
     if(stage == 1){
         pong(); //run pong function
     } 
     if(stage == 2){
-        p1Wins();
-    }
-    if(stage == 3){
-        p2Wins();
+        endOfGame();
     }
 
     if(mouseIsPressed){
@@ -82,16 +90,19 @@ function draw(){
 
 function mousePressed() {
     if (stage === 2 || stage === 3) {
-        stage = 0; // Go back to the splash screen
+        stage = 0; // Go back to the introductional screen
         p1Score = 0; // Reset scores
         p2Score = 0;
         ballSpeed = initBallSpeed; // Reset ball speed to its original value
     }
 }
 
-function splash(){
+function introductional(){
     //welcome screen
-    background(0);
+    //change this to image of microsoft 365 intro img where if you click the image/screen then you get directed to the excel-pong
+    //will also need some onboarding info
+    //if time: add a page to see how everything works with more detail
+    background(landingImg);
     fill(255);
 
     textSize(30);
@@ -102,32 +113,19 @@ function splash(){
 
     textSize(10);
     text('CLICK TO START', width / 2, height*0.6);
-}//close splash
+}//close introductional
 
 
-function p1Wins(){
+function endOfGame(){
     //p1 win screen
-    background(0);
+    background(endImg);
     fill(255);
 
     textSize(30);
-    text('PLAYER 1 WINS', width / 2, height*0.4);
+    text('END OF GAME', width / 2, height*0.4);
 
     textSize(10);
     text('CLICK ON SCREEN TO TRY AGAIN', width / 2, height*0.6);
-}//close P1WINS
-
-function p2Wins(){
-    //p1 win screen
-    background(0);
-    fill(255);
-
-    textSize(30);
-    text('CPU WINS', width / 2, height*0.4);
-
-    textSize(10);
-    text('CLICK ON SCREEN TO TRY AGAIN', width / 2, height*0.6);
-
 }//close P1WINS
 
 function pong(){
@@ -176,10 +174,11 @@ function pong(){
     }
 
     //scoreboard
-    textSize(25);
-    fill(255);
-    text(p1Score, windowWidth/2 - 50, height*0.1);
-    text(p2Score, windowWidth/2 + 50, height*0.1);
+    textSize(15);
+    fill(0);
+    text(p1Score, 250, height*0.175);
+    text(":",260,height*0.175)
+    text(p2Score, 270, height*0.175);
 
     if(ballX <= 0){
         // off left wall -- p1 missed
@@ -201,13 +200,9 @@ function pong(){
         ballSpeed = initBallSpeed; 
     }//close p1 scores
 
-    if(p1Score >= winningScore){
-        stage = 2; //run p1Wins
-    }//close p1wins
-
-    if(p2Score >= winningScore){
-        stage = 3; //run p2Wins
-    }//close p2wins
+    if(p1Score >= winningScore || p2Score >= winningScore){
+        stage = 2; //run endOfGame
+    }//close winningscore reached
 
 }//close pong
 
