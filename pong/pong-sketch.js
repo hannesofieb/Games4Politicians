@@ -1,0 +1,260 @@
+//global
+//P5.play MUST BE ENABLED
+
+//ball
+var ballX;
+var ballY;
+var ballWidth = 15;
+var ballHeight = 15;
+var ballSpeed = 4;
+var initBallSpeed = 4; // for resetting ballSpeed later in code
+var maxBallSpeed = 10; // Maximum speed the ball can reach
+var lastSpeedIncreaseTime = 0; // Variable to store the time of the last speed increase
+var speedIncreaseInterval = 10000; // Increase ball speed every 10 seconds (in milliseconds)
+var speedIncreaseAmount = 1; // Amount to increase ball speed by
+var ballDirectionX = 1;
+var ballDirectionY = 1;
+
+//player1
+var p1X = 10;
+var p1Y;
+//player2 IS NOW CPU
+var p2X;
+var p2Y;
+var cpuSpeed = 4; //allows to change difficulty levels
+//playersize
+var pWidth = 15;
+var pHeight = 50;
+var pSpeed = 8;
+
+//scoreboard
+var p1Score = 0;
+var p2Score = 0;
+var winningScore = 5;
+
+//functions
+var stage = 0;
+//0 = splash
+//1 = pong
+var pg;
+function setup(){
+    // Create canvas with specified width and height
+    var canvas = createCanvas(windowWidth, windowHeight);
+    pg = createGraphics(100, 100);
+    //initial ball position
+    rectMode(CENTER);
+    ballX = width / 2;
+    ballY = height / 2;
+
+    textAlign(CENTER); //center text
+
+    //sets placement of player paddles
+    p2X = width-10;
+    p2Y = height/2;
+    p1Y = height/2;
+
+} //close setup
+
+function draw(){
+    pg
+    if (stage == 0){
+        splash(); //run splash
+    }
+    if(stage == 1){
+        pong(); //run pong function
+    } 
+    if(stage == 2){
+        p1Wins();
+    }
+    if(stage == 3){
+        p2Wins();
+    }
+
+    if(mouseIsPressed){
+        stage = 1; // start pong
+    }//close stage change
+
+    // Moved player and CPU movement function calls to draw loop
+    handlePlayerMovement();
+    cpu();
+
+}//close draw
+
+function mousePressed() {
+    if (stage === 2 || stage === 3) {
+        stage = 0; // Go back to the splash screen
+        p1Score = 0; // Reset scores
+        p2Score = 0;
+        ballSpeed = initBallSpeed; // Reset ball speed to its original value
+    }
+}
+
+function splash(){
+    //welcome screen
+    background(0);
+    fill(255);
+
+    textSize(30);
+    text('PONG', width / 2, height*0.4);
+
+    textSize(10);
+    text('PROGRAMMED BY HANNE SOFIE', width / 2, height*0.45);
+
+    textSize(10);
+    text('CLICK TO START', width / 2, height*0.6);
+}//close splash
+
+
+function p1Wins(){
+    //p1 win screen
+    background(0);
+    fill(255);
+
+    textSize(30);
+    text('PLAYER 1 WINS', width / 2, height*0.4);
+
+    textSize(10);
+    text('CLICK ON SCREEN TO TRY AGAIN', width / 2, height*0.6);
+}//close P1WINS
+
+function p2Wins(){
+    //p1 win screen
+    background(0);
+    fill(255);
+
+    textSize(30);
+    text('CPU WINS', width / 2, height*0.4);
+
+    textSize(10);
+    text('CLICK ON SCREEN TO TRY AGAIN', width / 2, height*0.6);
+
+}//close P1WINS
+
+function pong(){
+    //court appearance
+    clear();
+    
+    noFill();
+    stroke(255, 0, 0);
+    rect(width / 2, height / 2, width, height);
+    line(width/2, 0, width/2, height); //centre line
+
+    //set colours
+    fill(255,0,0);
+    noStroke(); //no border
+
+    //draw ball
+    rect(ballX, ballY, ballWidth, ballHeight);
+
+    //draw players
+    rect(p1X, p1Y, pWidth, pHeight);
+    rect(p2X, p2Y, pWidth, pHeight);
+
+    //physics
+    ballX = ballX + (ballDirectionX * ballSpeed); //move horizontally
+    ballY = ballY + (ballDirectionY * ballSpeed); //move vertically
+
+    //ball speed increase
+    if (millis() - lastSpeedIncreaseTime >= speedIncreaseInterval && ballSpeed < maxBallSpeed) {
+        ballSpeed += speedIncreaseAmount;
+        lastSpeedIncreaseTime = millis(); // Update the last speed increase time
+    }
+
+    //collisions
+    //with walls
+    if(ballY >= height) {
+        //hit bottom wall
+        ballDirectionY = ballDirectionY * -1; //change direction
+    }
+    if(ballY <= 0) {
+        //hit top wall
+        ballDirectionY = ballDirectionY * -1; //change direction
+    }
+    //with paddles
+    if(ballX >= p1X - 10 && ballX <= p1X + 10 && ballY >= p1Y - 50 && ballY <= p1Y + 50){
+        //hit player paddle
+        ballDirectionX = ballDirectionX * -1; // change direction
+    }
+    if(ballX >= p2X - 10 && ballX <= p2X + 10 && ballY >= p2Y - 50 && ballY <= p2Y + 50){
+        //hit player paddle
+        ballDirectionX = ballDirectionX * -1; // change direction
+    }
+
+    //scoreboard
+    textSize(25);
+    fill(255);
+    text(p1Score, windowWidth/2 - 50, height*0.1);
+    text(p2Score, windowWidth/2 + 50, height*0.1);
+
+    if(ballX <= 0){
+        // off left wall -- p1 missed
+        p2Score = p2Score + 1; //add score
+        //recenter ball
+        ballX = width / 2;
+        ballY = height / 2;
+        //reset ballspeed
+        ballSpeed = initBallSpeed; 
+    }//close p2 scores
+
+    if(ballX >= width){
+        // off right wall -- p2 missed
+        p1Score = p1Score + 1; //add score
+        //recenter ball
+        ballX = width / 2;
+        ballY = height / 2;
+        //reset ballspeed
+        ballSpeed = initBallSpeed; 
+    }//close p1 scores
+
+    if(p1Score >= winningScore){
+        stage = 2; //run p1Wins
+    }//close p1wins
+
+    if(p2Score >= winningScore){
+        stage = 3; //run p2Wins
+    }//close p2wins
+
+}//close pong
+
+
+function handlePlayerMovement(){
+    if(keyIsDown(87)){
+        // w is pressed
+        if (p1Y > (pHeight/2)) { 
+        // Check if the paddle is not at the top edge
+            p1Y = p1Y - pSpeed;
+        }
+    }//close w
+    if(keyIsDown(83)){
+        // s is pressed
+        if (p1Y < height - (pHeight/2)) { 
+            // Check if the paddle is not at the bottom edge
+            p1Y = p1Y + pSpeed;
+        }
+    }//close s
+}//close handlePlayerMovement
+
+
+
+function cpu(){
+    //controls cpu player
+    if(ballX >= width / 2){ 
+        //if the ball crossed center court...
+        if (p2Y <= ballY){
+            p2Y = p2Y + cpuSpeed;
+            //move down
+        }//close above ball
+        if(p2Y >= ballY){
+            p2Y = p2Y - cpuSpeed;
+            //move up
+        }//close below ball
+    }//close move cpu
+    else{
+        p2Y = p2Y;
+        //only move when cpu ball is on cpu side
+    }//close else
+}//close cpu
+
+
+// followed Mr.Erdreich's tutorial for creating pong in JS: https://www.youtube.com/playlist?list=PLBDInqUM5B270kU0D3TyJl_c7Z98Q2oc7
+// also used chatgpt for bugs (Mr Erdreich's video might be a bit old? some lingo was not up to date)

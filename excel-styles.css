@@ -1,0 +1,39 @@
+html, body {
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.excel-nav{
+    width: 100vw;
+    height:15vh;
+}
+.excel-input-bar{
+    width: 100vw;
+    height:4vh;
+}
+
+nav .scoreboard{
+    background-color: white;
+    border: 1pt grey solid;
+    color: blue;
+}
+
+.excel-sheet {
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-width: 100vw; /* Ensure the container doesn't exceed the viewport width */
+    max-height: 85vh;
+}
+
+
+.pong-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.p1Paddle-container{
+    background-color: blue;
+    width: 25px;
+}
+
