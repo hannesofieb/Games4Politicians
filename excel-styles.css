@@ -41,3 +41,7 @@ nav .scoreboard{
     top: 0;
     left: 0;
 }
+
+#p5-play{
+    display: none;
+}
