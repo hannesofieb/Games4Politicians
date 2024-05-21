@@ -41,12 +41,12 @@ var stage = 0;
 //images
 var landingImg;
 var endImg;
-var cursor;
+var cursorImg;
 
 function preload(){
     landingImg = loadImage('img/landing-page.png');
     endImg = loadImage('img/365.png');
-    cursor = loadImage('../img/cursor-64-black.png');
+    cursorImg = loadImage('../img/cursor-64-black.png');
 
 }
 
@@ -132,7 +132,7 @@ function pong(){
     noStroke(); //no border
 
     //draw ball
-    image(cursor,ballX, ballY, ballWidth, ballHeight);
+    image(cursorImg,ballX, ballY, ballWidth, ballHeight);
 
     //draw players
     rect(p1X, p1Y, pWidth, pHeight);
