@@ -9,14 +9,14 @@ function setup() {
     };
 
     brain = ml5.neuralNetwork(options);
-    brain.loadData('model/data.json', dataReady); //put in json file from model-training
+    brain.loadData('model/data03.json', dataReady); //put in json file from model-training
 
 }
 
 
 function dataReady(){
     brain.normalizeData();
-    brain.train({epochs:20}, finished);
+    brain.train({epochs:50}, finished);
 }
 
 function finished(){
