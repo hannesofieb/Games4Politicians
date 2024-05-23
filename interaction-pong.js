@@ -51,7 +51,7 @@ let poseLabel = '';
 function preload(){
     landingImg = loadImage('img/landing-page.png');
     endImg = loadImage('img/365.png');
-    cursorImg = loadImage('../img/cursor-64-black.png');
+    cursorImg = loadImage('../img/cursor_black.png');
 }
 
 function modelLoading() {
