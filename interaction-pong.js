@@ -175,16 +175,7 @@ function introductional(){
     //will also need some onboarding info
     //if time: add a page to see how everything works with more detail
     background(landingImg);
-    fill(255);
 
-    textSize(30);
-    text('PONG', width / 2, height*0.4);
-
-    textSize(10);
-    text('PROGRAMMED BY HANNE SOFIE', width / 2, height*0.45);
-
-    textSize(10);
-    text('CLICK TO START', width / 2, height*0.6);
 }//close introductional
 
 

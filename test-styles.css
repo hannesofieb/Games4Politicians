@@ -1,37 +1,39 @@
-html, body {
-    overflow-x: hidden;
-    margin: 0;
-    padding: 0;
-    
+nav {
+    width: 100vw;
+    z-index: 0; /* Default z-index */
 }
 
-.excel-nav{
+.excel-nav {
     width: 100vw;
 }
 
+html, body {
+    margin: 0;
+    padding: 0;
+    /* overflow: hidden;  */
+    height: 100%;
+}
 
-nav .scoreboard{
-    background-color: white;
-    border: 1pt grey solid;
-    color: blue;
+canvas {
+    display: block; /* Removes any small gaps around the canvas */
+    position: absolute; /* Ensures canvas is positioned correctly */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .excel-sheet {
     overflow-x: hidden;
-    overflow-y: auto;
     max-width: 100vw; /* Ensure the container doesn't exceed the viewport width */
     max-height: 85vh;
 }
 
-.pong-container{
+.pong-container {
     display: flex;
     flex-direction: row;
 }
 
-.p1Paddle-container{
-    background-color: rgb(194, 194, 194);
-    width: 25px;
-}
 #defaultCanvas0 {
     position: absolute;
     z-index: 20;
@@ -39,6 +41,6 @@ nav .scoreboard{
     left: 0;
 }
 
-#p5-play{
+#p5-play {
     display: none;
 }

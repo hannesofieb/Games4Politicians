@@ -7,9 +7,9 @@ var ballX;
 var ballY;
 var ballWidth = 18;
 var ballHeight = 18;
-var ballSpeed = 5;
-var initBallSpeed = 5; // for resetting ballSpeed later in code
-var maxBallSpeed = 15; // Maximum speed the ball can reach
+var ballSpeed = 7;
+var initBallSpeed = 7; // for resetting ballSpeed later in code
+var maxBallSpeed = 10; // Maximum speed the ball can reach
 var lastSpeedIncreaseTime = 0; // Variable to store the time of the last speed increase
 var speedIncreaseInterval = 10000; // Increase ball speed every 10 seconds (in milliseconds)
 var speedIncreaseAmount = 1; // Amount to increase ball speed by
@@ -19,20 +19,27 @@ var ballDirectionY = 1;
 //player1
 var p1X = 5;
 var p1Y;
-//player2 IS NOW CPU
+//CPU
 var p2X;
 var p2Y;
-var cpuSpeed = 5; //allows to change difficulty levels
+var cpuSpeed = 15; //allows to change difficulty levels
+
 //playersize
 var pWidth = 10;
 var pHeight = 200;
-var pSpeed = 6;
+var pSpeed = 5;
 
 //scoreboard
 var p1Score = 0;
 var p2Score = 0;
 var winningScore = 5;
-var ts = 15;
+var ts = 15; //text size
+
+//interaction-toggle
+var toggle = true;
+var buffer = 10;
+var delay = 5000;
+var tts = 10; //text size for toggle
 
 //functions
 var stage = 0;
@@ -52,7 +59,7 @@ let poseLabel = '';
 function preload(){
     landingImg = loadImage('img/landing-page.png');
     endImg = loadImage('img/365.png');
-    cursorImg = loadImage('../img/cursor_black.png');
+    cursorImg = loadImage('img/cursor_black.png');
 }
 
 function modelLoading() {
@@ -60,7 +67,7 @@ function modelLoading() {
     video.hide();
     
     let options = {
-        inputs: 34, // 17 keypoints * 2 (x, y)
+        inputs: 4, // 17 keypoints * 2 (x, y)
         task: 'classification',
         debug: true,
     };
@@ -123,6 +130,7 @@ function gotResult(error, results) {
 function setup(){
     // Create canvas with specified width and height
     var canvas = createCanvas(windowWidth, windowHeight);
+    canvas.style('display', 'block');
     pg = createGraphics(100, 100);
     //initial ball position
     rectMode(CENTER);
@@ -143,7 +151,7 @@ function setup(){
 function windowResized(){
     resizeCanvas(windowWidth,windowHeight);
     p2X = width-p1X;
-    text(p1Score, width*0.15, height*0.175);
+    text(p1Score, width*0.15, height);
     text(":",width*0.16,height*0.175)
     text(p2Score, width*0.17, height*0.175);
     ts = 0.01*width
@@ -164,10 +172,10 @@ function draw(){
         stage = 1; // start pong
     }//close stage change
 
+
     // Moved player and CPU movement function calls to draw loop
     handlePlayerMovement();
     cpu();
-
 }//close draw
 
 function mousePressed() {
@@ -180,18 +188,23 @@ function mousePressed() {
 }
 
 function introductional(){
-    //welcome screen
-    //change this to image of microsoft 365 intro img where if you click the image/screen then you get directed to the excel-pong
-    //will also need some onboarding info
-    //if time: add a page to see how everything works with more detail
+    // Set the background image to cover the entire viewport
     background(landingImg);
+    image(landingImg, 0, 0, width, height);
+
+    // Reset window scroll position
+    window.scrollTo(0, 0);
 }//close introductional
 
 
 function endOfGame(){
-    //p1 win screen
+    // Set the background image to cover the entire viewport
     background(endImg);
-}//close P1WINS
+    image(endImg, 0, 0, width, height);
+
+    // Reset window scroll position
+    window.scrollTo(0, 0);
+}
 
 function pong(){
     clear(); //no trace of paddles or ball    
@@ -238,11 +251,53 @@ function pong(){
         ballDirectionX = ballDirectionX * -1; // change direction
     }
 
+    //interaction-toggle
+    fill(255);
+    rect(width*0.115,height*0.17,width*0.04,height*0.026);
+
+    // Check for mouse hover within toggle area
+    if (mouseX > width * 0.115 - buffer && // Left boundary with buffer
+        mouseX < width * 0.155 + buffer && // Right boundary with buffer
+        mouseY > height * 0.17 - buffer && // Top boundary with buffer
+        mouseY < height * 0.196 + buffer) {
+    cursor(HAND); // Change cursor to pointer (HAND) on hover
+    } else {
+    cursor(ARROW); // Set default cursor back to arrow
+    }
+
+    // Check for mouse click within toggle area
+    if (mouseIsPressed && 
+        mouseX > width * 0.115 - buffer && // Left boundary with buffer
+        mouseX < width * 0.155 + buffer && // Right boundary with buffer
+        mouseY > height * 0.17 - buffer && // Top boundary with buffer
+        mouseY < height * 0.196 + buffer) {// Bottom boundary with buffer
+        toggle = !toggle; // Toggle state change on click
+        setTimeout(() => {
+            mouseIsPressed = false; // Reset after delay
+          }, delay);
+      }
+
+    fill(150); // Set fill color for the inner toggle element
+
+    if (toggle) {
+        rect(width * 0.105, height * 0.17, width * 0.02, height * 0.02); // Draw background for "MOVE"
+        fill(255);
+        textSize(tts);
+        text("MOVE", width * 0.105, height * 0.174, width * 0.02, height * 0.02); // Display "MOVE"
+      } else {
+        rect(width * 0.125, height * 0.17, width * 0.02, height * 0.02); // Draw background for "KEYS"
+        fill(255);
+        textSize(tts);
+        text("KEYS", width * 0.125, height * 0.174, width * 0.02, height * 0.02); // Display "KEYS"
+      }
+    
+
+
     //scoreboard
     textSize(ts);
     fill(0);
     text(p1Score, width*0.15, height*0.175);
-    text(":",width*0.16,height*0.175)
+    text(":",width*0.16,height*0.175);
     text(p2Score, width*0.17, height*0.175);
 
     if(ballX <= 0){
@@ -271,47 +326,60 @@ function pong(){
 
 }//close pong
 
-
-function handlePlayerMovement(){
-    if (poseLabel === 'ARROWUP') {
+function handlePlayerMovement() {
+    if (toggle) { // detection if toggle is true (MOVE)
+        if (poseLabel === 'ARROWUP') {
+            if (p1Y > (pHeight / 2)) { 
+                // Check if the paddle is not at the top edge
+                p1Y = p1Y - pSpeed;
+            }
+      } else if (poseLabel === 'ARROWDOWN') {
+        if (p1Y < height - (pHeight / 2)) { 
+            // Check if the paddle is not at the bottom edge
+            p1Y = p1Y + pSpeed;
+        }
+      }
+    } else { // Use keyboard controls if toggle is false (KEYS)
+      if (keyIsDown(UP_ARROW)) { 
         if (p1Y > (pHeight / 2)) { 
             // Check if the paddle is not at the top edge
             p1Y = p1Y - pSpeed;
         }
-    } else if (poseLabel === 'ARROWDOWN') {
+      } else if (keyIsDown(DOWN_ARROW)) { 
         if (p1Y < height - (pHeight / 2)) { 
             // Check if the paddle is not at the bottom edge
             p1Y = p1Y + pSpeed;
+        }
+      }
+    }
+  }
+
+
+function cpu() {
+    // Determine the amount to scroll
+    var scrollAmount = 1; // Increase the scroll amount for better visibility
+
+    if (stage === 1) { // Ensure scrolling only happens in stage 1
+        // Controls CPU player
+        if (ballX >= width / 2) { 
+            // If the ball crossed center court...
+            if (p2Y <= ballY) {
+                p2Y = p2Y + cpuSpeed;
+                // Move down and scroll page down
+                document.querySelector('.excel-sheet').scrollBy(0, scrollAmount);
+            } 
+            if (p2Y >= ballY) {
+                p2Y = p2Y - cpuSpeed;
+                // Move up and scroll page up
+                document.querySelector('.excel-sheet').scrollBy(0, -scrollAmount);
+            }
         }
     }
 }
 
 
 
-function cpu() {
-    // Determine the amount to scroll
-    var scrollAmount = 1;
-
-    // Controls CPU player
-    if (ballX >= width / 2) { 
-        // If the ball crossed center court...
-        if (p2Y <= ballY) {
-            p2Y = p2Y + cpuSpeed;
-            // Move down and scroll page down
-            window.scrollBy(0, scrollAmount);
-        } // Close above ball
-        if (p2Y >= ballY) {
-            p2Y = p2Y - cpuSpeed;
-            // Move up and scroll page up
-            if (stage==1){
-                window.scrollBy(0, -scrollAmount);
-            }
-        } // Close below ball
-    } else {
-        p2Y = p2Y;
-        // Only move when CPU ball is on CPU side
-    } // Close else
-} // Close cpu
 
 // followed Mr.Erdreich's tutorial for creating pong in JS: https://www.youtube.com/playlist?list=PLBDInqUM5B270kU0D3TyJl_c7Z98Q2oc7
-// also used chatgpt for bugs (Mr Erdreich's video might be a bit old? some lingo was not up to date)
+// looked at xinxin's p5 toggle button sketch "Tutorial 3.3: Boolean Variable (completed)". Link: https://editor.p5js.org/xinxin/sketches/UHqr9rrCG 
+// also used chatGPT and Google Gemini to alter code to my needs

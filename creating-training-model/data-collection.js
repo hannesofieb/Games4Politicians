@@ -20,7 +20,7 @@ function keyPressed() {
             setTimeout(function() {
                 console.log('State: waiting');
                 state = 'waiting';
-            }, 10000); // Data will be collected for only 10 seconds
+            }, 20000); // Data will be collected for only 20 seconds
         }, 2000); // After 2 seconds, state will start collecting (to give time to get ready)
     }
 }
@@ -33,7 +33,7 @@ function setup() {
     poseNet.on('pose', gotPoses);
 
     let options = {
-        inputs: 4, // Only 4 inputs (eyeL.x, eyeL.y, eyeR.x, eyeR.y)
+        inputs: 3, // Only 3 input (eyeL.x, eyeR.x, midx)
         task: 'classification',
         debug: true,
     };
@@ -49,10 +49,15 @@ function gotPoses(poses) {
             let inputs = [];
             let eyeL = pose.leftEye;
             let eyeR = pose.rightEye;
-            inputs.push(eyeL.x);
-            inputs.push(eyeL.y);
-            inputs.push(eyeR.x);
-            inputs.push(eyeR.y);
+
+            let midx = (eyeR.x + eyeL.x) / 2;
+            let avHeight = (eyeR.y + eyeL.y) /2;
+
+            inputs.push(midx);
+            // inputs.push(eyeL.x);
+            // inputs.push(eyeL.y); won't need it because of new interaction pattern
+            // inputs.push(eyeR.x);
+            // inputs.push(eyeR.y); won't need it because of new interaction pattern
             
             let target = [targetLabel];
             brain.addData(inputs, target);
@@ -65,18 +70,28 @@ function modelLoaded() {
 }
 
 function draw() {
+    translate(video.width, 0);   //move image by the width of image to the left
+    scale(-1, 1);   //then flip it by scaling the video by -1 in the x-axis
     image(video, 0, 0); // Display the video on the canvas
+
+
 
     if (pose) {
         let eyeR = pose.rightEye;
         let eyeL = pose.leftEye;
         let d = dist(eyeR.x, eyeR.y, eyeL.x, eyeL.y);
 
-        d = d - 10;
+        let midx = (eyeR.x + eyeL.x) / 2;
+        let avHeight = (eyeR.y + eyeL.y) /2;
 
         fill(0, 0, 255);
-        ellipse(eyeR.x, eyeR.y, d);
-        ellipse(eyeL.x, eyeL.y, d);
+        ellipse(eyeR.x, eyeR.y, 15);
+        ellipse(eyeL.x, eyeL.y, 15);
+        fill(255,0,0);
+        ellipse(midx,avHeight,20);
+        line(width*0.46,0,width*0.46,height);
+        line(width*0.54,0,width*0.54,height);
+
 
         // console.log(d)
     }
