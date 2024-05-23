@@ -303,7 +303,9 @@ function cpu() {
         if (p2Y >= ballY) {
             p2Y = p2Y - cpuSpeed;
             // Move up and scroll page up
-            window.scrollBy(0, -scrollAmount);
+            if (stage==1){
+                window.scrollBy(0, -scrollAmount);
+            }
         } // Close below ball
     } else {
         p2Y = p2Y;
