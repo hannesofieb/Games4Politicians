@@ -7,9 +7,9 @@ var ballX;
 var ballY;
 var ballWidth = 18;
 var ballHeight = 18;
-var ballSpeed = 7;
-var initBallSpeed = 7; // for resetting ballSpeed later in code
-var maxBallSpeed = 25; // Maximum speed the ball can reach
+var ballSpeed = 5;
+var initBallSpeed = 5; // for resetting ballSpeed later in code
+var maxBallSpeed = 15; // Maximum speed the ball can reach
 var lastSpeedIncreaseTime = 0; // Variable to store the time of the last speed increase
 var speedIncreaseInterval = 10000; // Increase ball speed every 10 seconds (in milliseconds)
 var speedIncreaseAmount = 1; // Amount to increase ball speed by
@@ -26,7 +26,7 @@ var cpuSpeed = 5; //allows to change difficulty levels
 //playersize
 var pWidth = 10;
 var pHeight = 200;
-var pSpeed = 8;
+var pSpeed = 6;
 
 //scoreboard
 var p1Score = 0;
@@ -43,11 +43,80 @@ var landingImg;
 var endImg;
 var cursorImg;
 
+// model
+let model;
+let pose;
+let poseLabel = '';
+
 function preload(){
     landingImg = loadImage('img/landing-page.png');
     endImg = loadImage('img/365.png');
-    cursorImg = loadImage('../img/cursor_black.png');
+    cursorImg = loadImage('../img/cursor-64-black.png');
+}
 
+function modelLoading() {
+    video = createCapture(VIDEO, videoReady);
+    video.hide();
+    
+    let options = {
+        inputs: 34, // 17 keypoints * 2 (x, y)
+        task: 'classification',
+        debug: true,
+    };
+
+    brain = ml5.neuralNetwork(options);
+    const modelInfo = {
+        model: 'creating-training-model/model/model.json',
+        metadata: 'creating-training-model/model/model_meta.json',
+        weights: 'creating-training-model/model/model.weights.bin',
+    };
+    brain.load(modelInfo, brainLoaded);
+}
+
+function videoReady() {
+    poseNet = ml5.poseNet(video, brainLoaded);
+    poseNet.on('pose', gotPoses);
+}
+
+function gotPoses(poses) {
+    if (poses.length > 0) {
+        pose = poses[0].pose;
+        skeleton = poses[0].skeleton;
+    }
+}
+
+function brainLoaded() {
+    console.log("model ready!");
+    classifyPose();
+}
+
+function classifyPose() {
+    if (pose) {
+        let inputs = [];
+        for (let i = 0; i < pose.keypoints.length; i++) {
+            let x = pose.keypoints[i].position.x;
+            let y = pose.keypoints[i].position.y;
+            inputs.push(x);
+            inputs.push(y);
+        }
+        brain.classify(inputs, gotResult);
+    } else {
+        setTimeout(classifyPose, 100);
+    }
+}
+
+function gotResult(error, results) {
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    if (results[0].confidence > 0.70) {
+        poseLabel = results[0].label.toUpperCase();
+    }
+
+    console.log(poseLabel);
+    classifyPose();
 }
 
 function setup(){
@@ -66,10 +135,11 @@ function setup(){
     p2Y = height/2;
     p1Y = height/2;
 
+    modelLoading();
+
 } //close setup
 
 function draw(){
-    pg
     if (stage == 0){
         introductional(); //run introductional
     }
@@ -105,16 +175,6 @@ function introductional(){
     //will also need some onboarding info
     //if time: add a page to see how everything works with more detail
     background(landingImg);
-    fill(255);
-
-    textSize(30);
-    text('PONG', width / 2, height*0.4);
-
-    textSize(10);
-    text('PROGRAMMED BY HANNE SOFIE', width / 2, height*0.45);
-
-    textSize(10);
-    text('CLICK TO START', width / 2, height*0.6);
 }//close introductional
 
 
@@ -171,9 +231,9 @@ function pong(){
     //scoreboard
     textSize(15);
     fill(0);
-    text(p1Score, 250, height*0.175);
-    text(":",260,height*0.175)
-    text(p2Score, 270, height*0.175);
+    text(p1Score, width*0.15, height*0.175);
+    text(":",width*0.16,height*0.175)
+    text(p2Score, width*0.17, height*0.175);
 
     if(ballX <= 0){
         // off left wall -- p1 missed
@@ -203,21 +263,18 @@ function pong(){
 
 
 function handlePlayerMovement(){
-    if(keyIsDown(87)){
-        // w is pressed
-        if (p1Y > (pHeight/2)) { 
-        // Check if the paddle is not at the top edge
+    if (poseLabel === 'ARROWUP') {
+        if (p1Y > (pHeight / 2)) { 
+            // Check if the paddle is not at the top edge
             p1Y = p1Y - pSpeed;
         }
-    }//close w
-    if(keyIsDown(83)){
-        // s is pressed
-        if (p1Y < height - (pHeight/2)) { 
+    } else if (poseLabel === 'ARROWDOWN') {
+        if (p1Y < height - (pHeight / 2)) { 
             // Check if the paddle is not at the bottom edge
             p1Y = p1Y + pSpeed;
         }
-    }//close s
-}//close handlePlayerMovement
+    }
+}
 
 
 
