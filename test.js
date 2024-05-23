@@ -32,6 +32,7 @@ var pSpeed = 6;
 var p1Score = 0;
 var p2Score = 0;
 var winningScore = 5;
+var ts = 15;
 
 //functions
 var stage = 0;
@@ -51,7 +52,7 @@ let poseLabel = '';
 function preload(){
     landingImg = loadImage('img/landing-page.png');
     endImg = loadImage('img/365.png');
-    cursorImg = loadImage('../img/cursor-64-black.png');
+    cursorImg = loadImage('../img/cursor_black.png');
 }
 
 function modelLoading() {
@@ -138,6 +139,15 @@ function setup(){
     modelLoading();
 
 } //close setup
+
+function windowResized(){
+    resizeCanvas(windowWidth,windowHeight);
+    p2X = width-p1X;
+    text(p1Score, width*0.15, height*0.175);
+    text(":",width*0.16,height*0.175)
+    text(p2Score, width*0.17, height*0.175);
+    ts = 0.01*width
+}
 
 function draw(){
     if (stage == 0){
@@ -229,7 +239,7 @@ function pong(){
     }
 
     //scoreboard
-    textSize(15);
+    textSize(ts);
     fill(0);
     text(p1Score, width*0.15, height*0.175);
     text(":",width*0.16,height*0.175)
