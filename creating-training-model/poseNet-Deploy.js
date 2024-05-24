@@ -92,8 +92,10 @@ function draw() {
         ellipse(eyeL.x, eyeL.y, 15);
         fill(255,0,0);
         ellipse(midx,avHeight,20);
-        line(width*0.46,0,width*0.46,height);
-        line(width*0.54,0,width*0.54,height);
+        line(width*0.40,0,width*0.40,height);
+        line(width*0.60,0,width*0.60,height);
+        // line(width*0.46,0,width*0.46,height);
+        // line(width*0.54,0,width*0.54,height);
 
         // fill(255);
         // noStroke();

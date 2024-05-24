@@ -7,12 +7,12 @@ var ballX;
 var ballY;
 var ballWidth = 18;
 var ballHeight = 18;
-var ballSpeed = 7;
-var initBallSpeed = 7; // for resetting ballSpeed later in code
-var maxBallSpeed = 10; // Maximum speed the ball can reach
+var ballSpeed = 4;
+var initBallSpeed = 4; // for resetting ballSpeed later in code
+var maxBallSpeed = 8; // Maximum speed the ball can reach
 var lastSpeedIncreaseTime = 0; // Variable to store the time of the last speed increase
-var speedIncreaseInterval = 10000; // Increase ball speed every 10 seconds (in milliseconds)
-var speedIncreaseAmount = 1; // Amount to increase ball speed by
+var speedIncreaseInterval = 15000; // Increase ball speed every 10 seconds (in milliseconds)
+var speedIncreaseAmount = 0.5; // Amount to increase ball speed by
 var ballDirectionX = 1;
 var ballDirectionY = 1;
 
@@ -22,17 +22,17 @@ var p1Y;
 //CPU
 var p2X;
 var p2Y;
-var cpuSpeed = 15; //allows to change difficulty levels
+var cpuSpeed = 3; //allows to change difficulty levels
 
 //playersize
 var pWidth = 10;
 var pHeight = 200;
-var pSpeed = 5;
+var pSpeed = 4;
 
 //scoreboard
 var p1Score = 0;
 var p2Score = 0;
-var winningScore = 5;
+var winningScore = 10;
 var ts = 15; //text size
 
 //interaction-toggle
@@ -40,6 +40,12 @@ var toggle = true;
 var buffer = 10;
 var delay = 5000;
 var tts = 10; //text size for toggle
+var toggleX, toggleY, toggleW, toggleH;
+
+// timer
+var startTime;
+var elapsedTime;
+var bestTime = 0;
 
 //functions
 var stage = 0;
@@ -146,15 +152,42 @@ function setup(){
 
     modelLoading();
 
+    // Initialize sizes and speeds
+    initSizes();
+    initSpeeds();
+
+    //timer
+    startTime = millis();
+
+
 } //close setup
 
-function windowResized(){
-    resizeCanvas(windowWidth,windowHeight);
-    p2X = width-p1X;
-    text(p1Score, width*0.15, height);
-    text(":",width*0.16,height*0.175)
-    text(p2Score, width*0.17, height*0.175);
-    ts = 0.01*width
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+    p2X = width - p1X;
+    initSizes();
+    initSpeeds();
+}
+
+function initSizes() {
+    ballWidth = width * 0.02;
+    ballHeight = ballWidth;
+    pWidth = width * 0.01;
+    pHeight = height * 0.2;
+    ts = width * 0.01;
+    tts = width * 0.0065;
+
+    // Toggle button dimensions and position
+    toggleX = width * 0.115;
+    toggleY = height * 0.17;
+    toggleW = width * 0.04;
+    toggleH = height * 0.026;
+}
+
+function initSpeeds() {
+    pSpeed = height * 0.008;
+    cpuSpeed = height * 0.008;
+    ballSpeed = initBallSpeed * (width / 1500);
 }
 
 function draw(){
@@ -215,7 +248,7 @@ function pong(){
     noStroke(); //no border
 
     //draw ball
-    image(cursorImg,ballX, ballY, ballWidth, ballHeight);
+    image(cursorImg,ballX, ballY, ballWidth*0.5, ballHeight*0.5);
 
     //draw players
     rect(p1X, p1Y, pWidth, pHeight);
@@ -253,24 +286,24 @@ function pong(){
 
     //interaction-toggle
     fill(255);
-    rect(width*0.115,height*0.17,width*0.04,height*0.026);
+    rect(toggleX, toggleY, toggleW, toggleH);
 
     // Check for mouse hover within toggle area
-    if (mouseX > width * 0.115 - buffer && // Left boundary with buffer
-        mouseX < width * 0.155 + buffer && // Right boundary with buffer
-        mouseY > height * 0.17 - buffer && // Top boundary with buffer
-        mouseY < height * 0.196 + buffer) {
-    cursor(HAND); // Change cursor to pointer (HAND) on hover
+    if (mouseX > toggleX - buffer && // Left boundary with buffer
+        mouseX < toggleX + toggleW + buffer && // Right boundary with buffer
+        mouseY > toggleY - buffer && // Top boundary with buffer
+        mouseY < toggleY + toggleH + buffer) {
+        cursor(HAND); // Change cursor to pointer (HAND) on hover
     } else {
-    cursor(ARROW); // Set default cursor back to arrow
+        cursor(ARROW); // Set default cursor back to arrow
     }
 
     // Check for mouse click within toggle area
     if (mouseIsPressed && 
-        mouseX > width * 0.115 - buffer && // Left boundary with buffer
-        mouseX < width * 0.155 + buffer && // Right boundary with buffer
-        mouseY > height * 0.17 - buffer && // Top boundary with buffer
-        mouseY < height * 0.196 + buffer) {// Bottom boundary with buffer
+        mouseX > toggleX - buffer && // Left boundary with buffer
+        mouseX < toggleX + toggleW + buffer && // Right boundary with buffer
+        mouseY > toggleY - buffer && // Top boundary with buffer
+        mouseY < toggleY + toggleH + buffer) {// Bottom boundary with buffer
         toggle = !toggle; // Toggle state change on click
         setTimeout(() => {
             mouseIsPressed = false; // Reset after delay
@@ -280,17 +313,43 @@ function pong(){
     fill(150); // Set fill color for the inner toggle element
 
     if (toggle) {
-        rect(width * 0.105, height * 0.17, width * 0.02, height * 0.02); // Draw background for "MOVE"
+        rect(toggleX - toggleW * 0.25, toggleY, toggleW * 0.5, toggleH * 0.769); // Draw background for "MOVE"
         fill(255);
         textSize(tts);
-        text("MOVE", width * 0.105, height * 0.174, width * 0.02, height * 0.02); // Display "MOVE"
-      } else {
-        rect(width * 0.125, height * 0.17, width * 0.02, height * 0.02); // Draw background for "KEYS"
+        text("MOVE", toggleX - toggleW * 0.25, toggleY + toggleH * 0.154, toggleW * 0.5, toggleH * 0.769); // Display "MOVE"
+    } else {
+        rect(toggleX + toggleW * 0.25, toggleY, toggleW * 0.5, toggleH * 0.769); // Draw background for "KEYS"
         fill(255);
         textSize(tts);
-        text("KEYS", width * 0.125, height * 0.174, width * 0.02, height * 0.02); // Display "KEYS"
-      }
+        text("KEYS", toggleX + toggleW * 0.25, toggleY + toggleH * 0.154, toggleW * 0.5, toggleH * 0.769); // Display "KEYS"
+    }
     
+    //timer
+    elapsedTime = millis() - startTime; // Calculate elapsed time
+    let elapsedTimeSeconds = Math.floor(elapsedTime / 1000);     // Calculate the elapsed time in seconds
+
+    // Calculate minutes and seconds
+    let minutes = Math.floor(elapsedTimeSeconds / 60);
+    let seconds = elapsedTimeSeconds % 60;
+
+    // Format minutes and seconds to always have two digits
+    let formattedMinutes = nf(minutes, 2);
+    let formattedSeconds = nf(seconds, 2);
+
+    // Display the timer at the top center of the screen
+    textSize(tts*1.4);
+    fill(0);
+    text(`${formattedMinutes}:${formattedSeconds}`, width *0.905, height*0.085);
+
+    // Display the best time next to the timer
+    let bestMinutes = Math.floor(bestTime / 60);
+    let bestSeconds = bestTime % 60;
+    let formattedBestMinutes = nf(bestMinutes, 2);
+    let formattedBestSeconds = nf(bestSeconds, 2);
+
+    textSize(tts*1.4);
+    fill(255);
+    text(`${formattedBestMinutes}:${formattedBestSeconds}`, width * 0.969, height * 0.085);
 
 
     //scoreboard
@@ -303,21 +362,31 @@ function pong(){
     if(ballX <= 0){
         // off left wall -- p1 missed
         p2Score = p2Score + 1; //add score
+        // Update best time if current elapsed time is greater
+        if (elapsedTimeSeconds > bestTime) {
+            bestTime = elapsedTimeSeconds;
+        }
         //recenter ball
         ballX = width / 2;
         ballY = random(height * 0.25, height * 0.75); // Random Y position along the center
-        //reset ballspeed
+        //reset ballspeed and timer
         ballSpeed = initBallSpeed; 
+        startTime = millis();
     }//close p2 scores
 
     if(ballX >= width){
         // off right wall -- p2 missed
         p1Score = p1Score + 1; //add score
+        // Update best time if current elapsed time is greater
+        if (elapsedTimeSeconds > bestTime) {
+            bestTime = elapsedTimeSeconds;
+        }
         //recenter ball
         ballX = width / 2;
         ballY = random(height * 0.25, height * 0.75); // Random Y position along the center
-        //reset ballspeed
+        //reset ballspeed and timer
         ballSpeed = initBallSpeed; 
+        startTime = millis();
     }//close p1 scores
 
     if(p1Score >= winningScore || p2Score >= winningScore){

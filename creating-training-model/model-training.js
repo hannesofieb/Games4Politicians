@@ -9,7 +9,7 @@ function setup() {
     };
 
     brain = ml5.neuralNetwork(options);
-    brain.loadData('model/data04.json', dataReady); //put in json file from model-training
+    brain.loadData('model/data05.json', dataReady); //put in json file from model-training
 
 }
 
