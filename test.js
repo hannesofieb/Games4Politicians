@@ -7,9 +7,9 @@ var ballX;
 var ballY;
 var ballWidth = 18;
 var ballHeight = 18;
-var ballSpeed = 4;
-var initBallSpeed = 4; // for resetting ballSpeed later in code
-var maxBallSpeed = 8; // Maximum speed the ball can reach
+var ballSpeed = 10;
+var initBallSpeed = 7; // for resetting ballSpeed later in code
+var maxBallSpeed = 15; // Maximum speed the ball can reach
 var lastSpeedIncreaseTime = 0; // Variable to store the time of the last speed increase
 var speedIncreaseInterval = 15000; // Increase ball speed every 10 seconds (in milliseconds)
 var speedIncreaseAmount = 0.5; // Amount to increase ball speed by
@@ -27,7 +27,7 @@ var cpuSpeed = 3; //allows to change difficulty levels
 //playersize
 var pWidth = 10;
 var pHeight = 200;
-var pSpeed = 4;
+var pSpeed = 7;
 
 //scoreboard
 var p1Score = 0;
@@ -209,6 +209,8 @@ function draw(){
     // Moved player and CPU movement function calls to draw loop
     handlePlayerMovement();
     cpu();
+
+    console.log(ballSpeed);
 }//close draw
 
 function mousePressed() {
